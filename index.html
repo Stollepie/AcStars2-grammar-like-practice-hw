@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f9f6ff">
+<title>What do you like? | Starters</title>
+<style>
+:root{font-family:"Nunito","Trebuchet MS",system-ui,sans-serif;color:#26203e;background:#f9f6ff;--ink:#26203e;--muted:#5c526f;--purple:#5635ad;--line:#e7ddf4;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 5% 5%,#f1e8ff 0,transparent 48%),radial-gradient(ellipse at 95% 100%,#e3faf1 0,transparent 52%),#f9f6ff}
+button,input{font:inherit}
+button{touch-action:manipulation;cursor:pointer}
+[hidden]{display:none!important}
+button:focus-visible,input:focus-visible{outline:3px solid #7252c6;outline-offset:3px}
+button:disabled{cursor:default}
+.app{width:min(100% - 32px,690px);margin:auto;padding:clamp(16px,5vh,46px) 0 max(24px,env(safe-area-inset-bottom))}
+.hero{overflow:hidden;position:relative;isolation:isolate;border-radius:29px;padding:clamp(18px,4.6vw,35px);background:#e6d8ff;border:1px solid #dacefa}
+.hero-copy{position:relative;z-index:1}
+.hero h1{font-size:clamp(29px,6.1vw,54px);letter-spacing:-.055em;line-height:1.02;margin:0 0 8px;font-weight:900}
+.hero p{margin:0;color:#4c3b71;font-size:clamp(14px,3vw,17px);font-weight:700}
+.shape{position:absolute;z-index:-1;pointer-events:none}
+.sun{width:clamp(70px,19vw,150px);aspect-ratio:1;right:-12px;top:-30px;border-radius:50%;background:#ffedac}
+.loop{width:clamp(70px,18vw,132px);aspect-ratio:1;border:clamp(12px,3vw,23px) solid #c7f2df;border-radius:50%;right:clamp(27px,10vw,91px);bottom:-65px}
+.dot{width:33px;height:33px;border-radius:50%;right:16px;bottom:12px;background:#ffd5e5}
+.road{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:13px 0}
+.step{display:flex;gap:8px;align-items:center;padding:8px 10px;border-radius:15px;background:#ffffffab;border:1px solid #e6dff0;color:var(--muted);font-size:clamp(12px,3.3vw,15px);font-weight:800}
+.step span{display:grid;place-items:center;width:24px;height:24px;flex:none;border-radius:50%;background:#eee8f7}
+.step[aria-current=step]{background:#f0e7ff;color:#432683;border-color:#d8c6f7}
+.step[aria-current=step] span{color:white;background:var(--purple)}
+.step.done{background:#e3f8ee;color:#235741;border-color:#ceeadd}
+.step.done span{background:#c9efd9}
+.panel{border:1px solid #eee6f5;background:var(--card);border-radius:26px;padding:clamp(15px,4vw,31px);box-shadow:0 13px 34px #5532770c}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:14px;font-weight:800}
+.meter{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin:9px 0 18px}
+.meter span{height:7px;border-radius:999px;background:#eee7f7}
+.meter .done{background:#7ccba3}
+.meter .current{background:#9068df}
+h2{margin:0;font-size:clamp(20px,4vw,26px);letter-spacing:-.025em}
+.sentence{margin:11px 0 13px;padding:clamp(14px,3.5vw,22px);border:1px solid #eadff8;border-radius:19px;background:#faf6ff;font-size:clamp(22px,5.4vw,33px);line-height:1.5;font-weight:800;overflow-wrap:anywhere}
+.gap{display:inline-block;min-width:3.2em;padding:0 .21em;border-bottom:3px solid #9174c5;color:#5635ad;text-align:center;line-height:1.15}
+.gap.filled{border-color:#69b890;color:#18543b}
+.cue{color:#594679;font-size:.65em;font-weight:700;white-space:nowrap}
+.options{display:grid;grid-template-columns:1fr;gap:8px}
+.option{background:#fff;border:1px solid #ddd1ed;border-radius:14px;min-height:49px;padding:9px 12px;text-align:left;color:var(--ink);font-weight:800;font-size:clamp(16px,3.6vw,19px);display:flex;align-items:center;gap:10px;line-height:1.25}
+.option .letter{display:grid;place-items:center;flex:none;width:26px;height:26px;border-radius:8px;background:#eee6fc;color:#50338c;font-size:13px}
+.option:nth-child(2) .letter{background:#ffe7f0;color:#7e3456}
+.option:nth-child(3) .letter{background:#fff0c5;color:#674b0a}
+@media(hover:hover){.option:enabled:hover{background:#f8f3ff;border-color:#a88bcf}}
+.option.wrong,input.wrong{background:#fff0f2;border-color:#b94f69}
+.option.correct,input.correct{background:#e5f8ec;border-color:#62ac82;color:#18543b}
+.option.correct .letter{background:#c6ebd6;color:#18543b}
+input{width:100%;border:1px solid #ccbddf;border-radius:13px;background:#fff;color:var(--ink);min-height:51px;padding:10px 13px;font-size:18px}
+label{display:block;font-size:14px;font-weight:800;color:var(--muted);margin-bottom:6px}
+.feedback{min-height:1.45em;font-size:15px;font-weight:800;margin:11px 0 8px;color:#8b334e}
+.feedback.success{color:#1c6547}
+.example,.hint{margin:10px 0;padding:9px 12px;border-radius:13px;font-size:15px;line-height:1.45}
+.example{background:#f0e7ff;color:#432683}
+.example summary{cursor:pointer;font-weight:800;padding:4px 0}
+.example p{margin:4px 0}
+.hint{background:#fff3cd;color:#5d430e;font-weight:700}
+.hint:empty{display:none}
+.primary{width:100%;min-height:48px;background:var(--purple);border:0;border-radius:14px;padding:11px 15px;color:white;font-weight:800;font-size:17px;box-shadow:0 3px 0 #3f2488}
+.primary:active{transform:translateY(1px)}
+#check{margin-top:9px}
+.footer{display:flex;justify-content:center;margin-top:9px}
+.secondary{min-height:44px;padding:8px 13px;border:0;border-radius:12px;background:transparent;color:#51368b;font-weight:800}
+.secondary:hover{background:#eee4fc}
+.result{text-align:center;padding:13px 0 8px}
+.result p{font-weight:700;color:var(--muted);margin:9px 0 20px}
+.result-mark{width:60px;height:60px;display:grid;place-items:center;margin:0 auto 12px;border-radius:19px;background:#fff0ba;color:#624502;font-size:34px}
+@media(min-width:620px){.options{grid-template-columns:repeat(3,minmax(0,1fr))}.option{min-height:61px}}
+@media(prefers-reduced-motion:no-preference){.option.wrong,input.wrong{animation:nudge .25s ease-out}@keyframes nudge{33%{transform:translateX(-3px)}66%{transform:translateX(3px)}}}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="hero">
+    <div class="shape sun"></div><div class="shape loop"></div><div class="shape dot"></div>
+    <div class="hero-copy"><h1>What do you like?</h1><p>Present Simple · like + <em>-ing</em></p></div>
+  </header>
+  <nav class="road" aria-label="Practice steps">
+    <div class="step" id="step-choice" aria-current="step"><span aria-hidden="true">1</span> Choose</div>
+    <div class="step" id="step-write"><span aria-hidden="true">2</span> Write</div>
+  </nav>
+  <section class="panel" id="practice" aria-labelledby="instruction">
+    <div class="meta"><span id="part"></span><span id="count"></span></div>
+    <div class="meter" id="meter" aria-hidden="true"></div>
+    <h2 id="instruction" tabindex="-1"></h2>
+    <details class="example" id="example" hidden>
+      <summary>See an example</summary>
+      <p>I ___ (play) with my dog.</p>
+      <p>Type <strong>like playing</strong> in the box. Then tap <strong>Check</strong>.</p>
+    </details>
+    <p class="sentence" id="sentence"></p>
+    <div class="options" id="options" aria-label="Answer choices"></div>
+    <form id="writing" hidden>
+      <label for="answer">Your answer</label>
+      <input id="answer" aria-describedby="sentence hint" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="done">
+      <p class="hint" id="hint" role="status"></p>
+      <button class="primary" id="check" type="submit">Check</button>
+    </form>
+    <p class="feedback" id="feedback" role="status"></p>
+    <button class="primary" id="next" type="button" hidden>Next</button>
+  </section>
+  <section class="panel result" id="result" aria-labelledby="result-title" hidden>
+    <div class="result-mark" aria-hidden="true">★</div>
+    <h2 id="result-title" tabindex="-1"></h2>
+    <p id="result-text"></p>
+    <button class="primary" id="result-action" type="button"></button>
+  </section>
+  <div class="footer"><button class="secondary" id="renew" type="button">↻ New sentences</button></div>
+</main>
+<script>
+"use strict";
+
+const actions = [
+  ["play", "playing", "football", "tennis", "basketball", "games"],
+  ["read", "reading", "books", "stories", "comics"],
+  ["draw", "drawing", "cats", "flowers", "pictures", "dogs"],
+  ["watch", "watching", "TV", "cartoons"],
+  ["eat", "eating", "apples", "bananas", "ice cream", "cake"],
+  ["drink", "drinking", "milk", "water", "orange juice"],
+  ["ride", "riding", "a bike", "a horse"],
+  ["listen", "listening", "to music", "to stories"],
+  ["sing", "singing", "songs"],
+  ["swim", "swimming", "in the pool", "in the sea"],
+  ["run", "running", "in the park"],
+  ["dance", "dancing", "at home"],
+  ["make", "making", "cakes", "a sandwich"],
+  ["paint", "painting", "pictures", "flowers"],
+  ["walk", "walking", "to school", "in the park"],
+  ["take", "taking", "photos"],
+  ["jump", "jumping", "in the park"],
+  ["fly", "flying", "a kite"]
+];
+const patterns = [
+  {subjects:["I","We","They"], forms:["like","likes"], answer:"like"},
+  {subjects:["He","She","Tom","Lucy"], forms:["likes","like"], answer:"likes"},
+  {subjects:["I","We","They"], forms:["don't like","doesn't like"], answer:"don't like", full:"do not like"},
+  {subjects:["He","She","Ben","Anna"], forms:["doesn't like","don't like"], answer:"doesn't like", full:"does not like"}
+];
+const roundSize = 8;
+const storageKey = "starters-like-ing-choice-v1";
+const get = id => document.getElementById(id);
+const practice = get("practice");
+const result = get("result");
+const instruction = get("instruction");
+const sentence = get("sentence");
+const options = get("options");
+const writing = get("writing");
+const answer = get("answer");
+const example = get("example");
+const hint = get("hint");
+const check = get("check");
+const feedback = get("feedback");
+const next = get("next");
+const resultAction = get("result-action");
+
+let phase, rounds, position, solved, firstTry, tried, previous, writingMisses;
+
+function shuffled(items) {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function readPrevious() {
+  try { return JSON.parse(localStorage.getItem(storageKey)) || []; }
+  catch { return []; }
+}
+
+function buildRounds() {
+  const available = shuffled(actions);
+  const lastChoice = Array.isArray(previous) ? previous : [];
+  const order = [...available.filter(action => !lastChoice.includes(action[0])),
+    ...available.filter(action => lastChoice.includes(action[0]))];
+  previous = order.slice(0, roundSize).map(action => action[0]);
+  try { localStorage.setItem(storageKey, JSON.stringify(previous)); }
+  catch { /* Practice also works without browser storage. */ }
+
+  return [0, 1].map(part => {
+    const selectedPatterns = shuffled([...patterns, ...patterns]);
+    const selectedActions = shuffled(order.slice(part * roundSize, (part + 1) * roundSize));
+    return selectedPatterns.map((pattern, index) => {
+      const [base, ing, ...endings] = selectedActions[index];
+      const [rightForm, wrongForm] = pattern.forms;
+      return {
+        subject: shuffled(pattern.subjects)[0],
+        end: shuffled(endings)[0],
+        base,
+        ing,
+        likeForm: pattern.answer,
+        fullLikeForm: pattern.full,
+        correct: pattern.answer + " " + ing,
+        full: pattern.full ? pattern.full + " " + ing : "",
+        options: shuffled([rightForm + " " + ing, wrongForm + " " + ing, rightForm + " " + base])
+      };
+    });
+  });
+}
+
+function setStep(active) {
+  ["choice", "write"].forEach((name, index) => {
+    const step = get("step-" + name);
+    step.classList.toggle("done", index < active);
+    step.querySelector("span").textContent = index < active ? "✓" : index + 1;
+    if (index === active) step.setAttribute("aria-current", "step");
+    else step.removeAttribute("aria-current");
+  });
+}
+
+function startRound(part, focus) {
+  phase = part;
+  position = 0;
+  firstTry = 0;
+  result.hidden = true;
+  practice.hidden = false;
+  setStep(part);
+  showQuestion(focus);
+}
+
+function newSet(focus) {
+  rounds = buildRounds();
+  startRound(0, focus);
+}
+
+function current() {
+  return rounds[phase][position];
+}
+
+function setSentence(value = "") {
+  const question = current();
+  const gap = document.createElement("span");
+  gap.className = value ? "gap filled" : "gap";
+  gap.textContent = value || "___";
+  sentence.replaceChildren(document.createTextNode(question.subject + " "), gap);
+  if (phase === 1 && !value) {
+    const cue = document.createElement("span");
+    cue.className = "cue";
+    cue.textContent = question.full ? "(not / " + question.base + ")" : "(" + question.base + ")";
+    sentence.append(" ", cue);
+  }
+  sentence.append(" " + question.end + ".");
+}
+
+function showQuestion(focus) {
+  const question = current();
+  solved = false;
+  tried = false;
+  writingMisses = 0;
+  get("part").textContent = "Part " + (phase + 1);
+  get("count").textContent = (position + 1) + " of " + roundSize;
+  const segments = Array.from({length: roundSize}, (_, index) => {
+    const segment = document.createElement("span");
+    segment.className = index < position ? "done" : index === position ? "current" : "";
+    return segment;
+  });
+  get("meter").replaceChildren(...segments);
+  instruction.textContent = phase === 0 ? "Choose the missing words." : "Write the missing words.";
+  example.hidden = phase === 0;
+  example.open = phase === 1 && position === 0;
+  hint.textContent = "";
+  setSentence();
+  feedback.textContent = "";
+  feedback.classList.remove("success");
+  next.hidden = true;
+  next.textContent = position === roundSize - 1 ? "See results" : "Next";
+  options.hidden = phase === 1;
+  writing.hidden = phase === 0;
+  answer.value = "";
+  answer.readOnly = false;
+  answer.className = "";
+  answer.removeAttribute("aria-invalid");
+  check.hidden = false;
+  options.replaceChildren();
+  if (phase === 0) {
+    question.options.forEach((value, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "option";
+      const letter = document.createElement("span");
+      letter.className = "letter";
+      letter.setAttribute("aria-hidden", "true");
+      letter.textContent = "ABC"[index];
+      button.append(letter, document.createTextNode(value));
+      button.addEventListener("click", () => markChoice(button, value));
+      options.append(button);
+    });
+  }
+  if (focus) instruction.focus();
+}
+
+function completeQuestion(value) {
+  if (!tried) firstTry++;
+  solved = true;
+  setSentence(value);
+  feedback.textContent = "✓ Well done!";
+  feedback.classList.add("success");
+  get("meter").children[position].className = "done";
+  next.hidden = false;
+  next.focus();
+}
+
+function markChoice(button, value) {
+  if (solved) return;
+  if (value === current().correct) {
+    button.classList.add("correct");
+    for (const option of options.children) option.disabled = true;
+    completeQuestion(value);
+  } else {
+    tried = true;
+    button.classList.add("wrong");
+    feedback.textContent = "Try another answer.";
+  }
+}
+
+function normalized(value) {
+  return value.toLowerCase().replace(/[‘’]/g, "'").trim().replace(/\s+/g, " ");
+}
+
+function writingHint(question, value) {
+  const {subject, base, ing, likeForm, fullLikeForm} = question;
+  const choices = fullLikeForm ? "“don't like” or “doesn't like”" : "“like” or “likes”";
+  const hasLikeForm = [likeForm, fullLikeForm].some(form =>
+    form && (value === form || value.startsWith(form + " ")));
+  if (writingMisses === 2) {
+    return hasLikeForm
+      ? "Your first words are right! Now change “" + base + "” to its -ing form."
+      : "Look at “" + subject + "”. Which goes with it, " + choices + "? Then use the -ing form of “" + base + "”.";
+  }
+  if (writingMisses === 3) {
+    return hasLikeForm
+      ? "Keep your first words. Change “" + base + "” to “" + ing + "”."
+      : "After “" + subject + "”, start with “" + likeForm + "”. Then write the -ing form of “" + base + "”.";
+  }
+  return "Put the two parts together. Type “" + likeForm + "”, add a space, then type “" + ing + "”.";
+}
+
+writing.addEventListener("submit", event => {
+  event.preventDefault();
+  if (solved) return;
+  const value = normalized(answer.value);
+  const question = current();
+  if (value === question.correct || (question.full && value === question.full)) {
+    hint.textContent = "";
+    answer.className = "correct";
+    answer.removeAttribute("aria-invalid");
+    answer.readOnly = true;
+    check.hidden = true;
+    completeQuestion(value);
+    return;
+  }
+  if (value) {
+    tried = true;
+    writingMisses++;
+    if (writingMisses >= 2) hint.textContent = writingHint(question, value);
+  }
+  answer.className = value ? "wrong" : "";
+  answer.setAttribute("aria-invalid", "true");
+  feedback.textContent = value ? "Try again." : "Write an answer first.";
+  answer.focus();
+});
+answer.addEventListener("input", () => {
+  if (solved) return;
+  answer.className = "";
+  answer.removeAttribute("aria-invalid");
+  feedback.textContent = "";
+});
+
+function showResult() {
+  practice.hidden = true;
+  result.hidden = false;
+  setStep(phase + 1);
+  const title = get("result-title");
+  title.textContent = phase === 0 ? "Ready to try on your own?" : "You finished both parts!";
+  get("result-text").textContent = firstTry + " of " + roundSize + " correct on your first try.";
+  resultAction.textContent = phase === 0 ? "Start writing" : "Play again";
+  get("renew").hidden = phase === 1;
+  title.focus();
+}
+
+next.addEventListener("click", () => {
+  if (!solved) return;
+  position++;
+  if (position === roundSize) showResult();
+  else showQuestion(true);
+});
+resultAction.addEventListener("click", () => {
+  if (phase === 0) startRound(1, true);
+  else {
+    get("renew").hidden = false;
+    newSet(true);
+  }
+});
+get("renew").addEventListener("click", () => newSet(true));
+
+previous = readPrevious();
+newSet(false);
+</script>
+</body>
+</html>
